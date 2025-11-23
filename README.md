@@ -38,6 +38,8 @@ Halaman	Tampilan
 
 1. Halaman Login — login_page.dart
 
+<img width="1036" height="701" alt="image" src="https://github.com/user-attachments/assets/0882834b-d2c6-446c-be22-16d2bd44473f" />
+
 Fungsi:
 
 Input email & password
@@ -54,6 +56,8 @@ Link Registrasi	Menuju halaman registrasi
 
 2. Halaman Registrasi — registrasi_page.dart
 
+<img width="1036" height="701" alt="image" src="https://github.com/user-attachments/assets/13dbde5b-84b7-4976-a74b-0d6ae94f73c7" />
+
 Fungsi:
 
 Mendaftarkan pengguna baru
@@ -61,6 +65,8 @@ Mendaftarkan pengguna baru
 Validasi email, password, dan konfirmasi password
 
 3. List Produk — produk_page.dart
+
+<img width="1036" height="701" alt="image" src="https://github.com/user-attachments/assets/a33db05f-9d82-4da7-8b45-32092cd316bd" />
 
 Fungsi:
 
@@ -74,6 +80,8 @@ Fitur:
 
 4. Tambah / Edit Produk — produk_form.dart
 
+<img width="1036" height="701" alt="image" src="https://github.com/user-attachments/assets/fe1b2157-0978-4fd1-8bc0-b31831957c2f" />
+
 Halaman ini otomatis menyesuaikan mode:
 
 Mode	Kondisi
@@ -81,6 +89,8 @@ Tambah Produk	widget.produk == null
 Ubah Produk	widget.produk != null
 
 5. Detail Produk — produk_detail.dart
+
+<img width="1036" height="701" alt="image" src="https://github.com/user-attachments/assets/d382542f-079f-45d1-b7d7-996f128ef7c6" />
 
 Fungsi:
 Menampilkan informasi lengkap produk yang dipilih, meliputi:
