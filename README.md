@@ -5,36 +5,59 @@ Deskripsi Aplikasi
 Aplikasi ini merupakan implementasi UI CRUD Produk sesuai Modul Pertemuan 10. Seluruh bagian aplikasi sudah menggunakan nama panggilan “Adel” pada setiap Action Bar, sehingga tampilan aplikasi menjadi lebih personal dan konsisten, diantaranya:
 
 Halaman	Judul AppBar
+
 Login	Login Adel
+
 Registrasi	Registrasi Adel
+
 List Produk	List Produk Adel
+
 Tambah Produk	Tambah Produk Adel
+
 Ubah Produk	Ubah Produk Adel
+
 Detail Produk	Detail Produk Adel
+
 
 Aplikasi dibangun menggunakan Flutter dan nantinya akan dihubungkan dengan REST API CodeIgniter 4 untuk proses autentikasi, manajemen produk, dan komunikasi database.
 
 Struktur 
+
 lib/
+
  ├── main.dart
+ 
  ├── model/
+ 
  │    ├── produk.dart
+ 
  │    ├── login.dart
+ 
  │    └── registrasi.dart
+ 
  └── ui/
       ├── login_page.dart
-      ├── registrasi_page.dart
+      
+      ├── register_page.dart
+      
       ├── produk_page.dart
+      
       ├── produk_form.dart
+      
       └── produk_detail.dart
 
 Tampilan Aplikasi
-Halaman	Tampilan
+
 🔐 Login	Login
+
 📝 Registrasi	Registrasi
+
 📋 List Produk	List
+
 ➕ Tambah Produk	Tambah
+
 🔍 Detail Produk	Detail
+
 
 1. Halaman Login — login_page.dart
 
