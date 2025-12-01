@@ -154,22 +154,39 @@ Backend (CodeIgniter 4 + Database MySQL)
 Untuk memastikan API bekerja dengan benar, pengujian sering dilakukan menggunakan Postman sebelum dihubungkan ke Flutter.
 
 Flutter (UI & Logic)
+
    |
+   
    | HTTP Request (POST/GET) - body: form-data
+   
    v
+   
 CodeIgniter 4 (REST API Controller)
+
    |
+   
    | Query  
+   
    v 
+   
 Database MySQL (tabel member, login, produk, dll)
-   | 
-   | Hasil query
-   v
-CodeIgniter 4 (susun JSON response)
+
    |
-   | JSON Response (code, status, data) 
+   
+   | Hasil query
+   
    v
+   
+CodeIgniter 4 (susun JSON response)
+
+   |
+   
+   | JSON Response (code, status, data) 
+   
+   v
+   
 Flutter (Bloc & Model parsing JSON)
+
 
 Alur Kerja REGISTRASI
 1. User isi form Registrasi di Flutter
