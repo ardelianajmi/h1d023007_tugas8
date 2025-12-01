@@ -154,37 +154,21 @@ Backend (CodeIgniter 4 + Database MySQL)
 Untuk memastikan API bekerja dengan benar, pengujian sering dilakukan menggunakan Postman sebelum dihubungkan ke Flutter.
 
 Flutter (UI & Logic)
-
    |
-   
    | HTTP Request (POST/GET) - body: form-data
-   
    v
-   
 CodeIgniter 4 (REST API Controller)
-
    |
-   
-   | Query
-   
-   v
-   
+   | Query  
+   v 
 Database MySQL (tabel member, login, produk, dll)
-
-   |
-   
+   | 
    | Hasil query
-   
    v
-   
 CodeIgniter 4 (susun JSON response)
-
    |
-   
-   | JSON Response (code, status, data)
-   
+   | JSON Response (code, status, data) 
    v
-   
 Flutter (Bloc & Model parsing JSON)
 
 Alur Kerja REGISTRASI
@@ -218,7 +202,7 @@ var body = {"nama": nama, "email": email, "password": password};
 final response = await Api().post(apiUrl, body, useToken: false);
 
 
-➡️ Ini membuat HTTP POST ke:
+Ini membuat HTTP POST ke:
 
 URL: http://localhost:8080/registrasi
 
@@ -448,21 +432,28 @@ JSON berisi code, status, data.token, dan data.user.
 
 Dengan Postman, jika ada error di backend (route salah, validasi gagal, JSON tidak sesuai), bisa diperbaiki dulu sebelum dikonsumsi oleh Flutter.
 
+Catatan :
+
 Database
+
 Menyimpan data user (member), password yang sudah di-hash, dan token login.
 
 CodeIgniter (Backend / API)
+
 Penghubung antara Flutter dan Database.
 Menerima request, akses DB, lalu mengembalikan JSON.
 
 JSON
+
 Format data standar yang mudah dibaca oleh Flutter dan backend.
 Contoh: code, status, data, token, user.
 
 Flutter (Frontend)
+
 Menampilkan form & UI, memanggil API via HTTP, mem-parsing JSON menjadi model Dart (Login, Registrasi), dan menyimpan token untuk request berikutnya.
 
 Postman
+
 Alat bantu untuk menguji API secara manual sebelum diintegrasikan ke aplikasi Flutter.
 
 
