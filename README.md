@@ -136,3 +136,10 @@ Tombol	Aksi
 Edit	Membuka produk_form.dart
 Hapus	
 
+setelah mempelajari modul pertemuan 11 jd kita belajar login register dengan tautan lain pake database, postman, dan ada codeigniter
+
+<img width="1366" height="728" alt="image" src="https://github.com/user-attachments/assets/6eb6aabd-3757-4dd0-bf0b-97d4419cc0a0" />
+
+<img width="1366" height="728" alt="image" src="https://github.com/user-attachments/assets/4fcc1967-e0a9-4608-8ee3-0c386c84cd1e" />
+
+<img width="1366" height="728" alt="image" src="https://github.com/user-attachments/assets/4dc23546-f9f2-4ce1-86d0-7391b18270bb" />
