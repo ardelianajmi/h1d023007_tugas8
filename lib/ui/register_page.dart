@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '/bloc/registrasi_bloc.dart';
+import '/widget/success_dialog.dart';
+import '/widget/warning_dialog.dart';
 
 class RegistrasiPage extends StatefulWidget {
   const RegistrasiPage({Key? key}) : super(key: key);
@@ -11,111 +14,37 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
-  final TextEditingController _namaController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordKonfirmasiController =
-      TextEditingController();
+  final _namaTextboxController = TextEditingController();
+  final _emailTextboxController = TextEditingController();
+  final _passwordTextboxController = TextEditingController();
 
   @override
   void dispose() {
-    _namaController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _passwordKonfirmasiController.dispose();
+    _namaTextboxController.dispose();
+    _emailTextboxController.dispose();
+    _passwordTextboxController.dispose();
     super.dispose();
-  }
-
-  Future<void> _onRegistrasi() async {
-    final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
-
-    setState(() => _isLoading = true);
-
-    // TODO: panggil API registrasi di sini
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Registrasi berhasil 🎉')),
-    );
-    Navigator.pop(context); // kembali ke login
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Registrasi Adel', // ← diubah di sini
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFFF80AB), Color(0xFFFDEBFF)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Card(
-                elevation: 10,
-                shadowColor: Colors.pink.withOpacity(0.25),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 22,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Buat Akun Baru',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Isi data di bawah ini untuk melanjutkan',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        _namaTextField(),
-                        const SizedBox(height: 12),
-                        _emailTextField(),
-                        const SizedBox(height: 12),
-                        _passwordTextField(),
-                        const SizedBox(height: 12),
-                        _passwordKonfirmasiTextField(),
-                        const SizedBox(height: 22),
-                        _buttonRegistrasi(),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+      appBar: AppBar(title: const Text("Registrasi")),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _namaTextField(),
+                _emailTextField(),
+                _passwordTextField(),
+                _passwordKonfirmasiTextField(),
+                const SizedBox(height: 16),
+                _buttonRegistrasi(),
+              ],
             ),
           ),
         ),
@@ -123,97 +52,153 @@ class _RegistrasiPageState extends State<RegistrasiPage> {
     );
   }
 
+  // Membuat Textbox Nama
   Widget _namaTextField() {
     return TextFormField(
-      controller: _namaController,
-      decoration: const InputDecoration(
-        labelText: 'Nama Lengkap',
-        prefixIcon: Icon(Icons.person_outline),
-      ),
+      decoration: const InputDecoration(labelText: "Nama"),
+      keyboardType: TextInputType.text,
+      controller: _namaTextboxController,
       validator: (value) {
-        if (value == null || value.trim().length < 3) {
-          return 'Nama minimal 3 karakter';
+        if (value == null || value.isEmpty) {
+          return "Nama harus diisi";
+        }
+        if (value.length < 3) {
+          return "Nama harus diisi minimal 3 karakter";
         }
         return null;
       },
     );
   }
 
+  // Membuat Textbox Email
   Widget _emailTextField() {
     return TextFormField(
-      controller: _emailController,
+      decoration: const InputDecoration(labelText: "Email"),
       keyboardType: TextInputType.emailAddress,
-      decoration: const InputDecoration(
-        labelText: 'Email',
-        prefixIcon: Icon(Icons.email_outlined),
-      ),
+      controller: _emailTextboxController,
       validator: (value) {
+        // validasi harus diisi
         if (value == null || value.isEmpty) {
           return 'Email harus diisi';
         }
-        final regex = RegExp(
-          r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@'
-          r'((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|'
-          r'(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
-        );
+
+        // validasi email
+        const String pattern =
+            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@'
+            r'((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|'
+            r'(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+
+        final regex = RegExp(pattern);
         if (!regex.hasMatch(value)) {
-          return 'Email tidak valid';
+          return "Email tidak valid";
         }
         return null;
       },
     );
   }
 
+  // Membuat Textbox Password
   Widget _passwordTextField() {
     return TextFormField(
-      controller: _passwordController,
+      decoration: const InputDecoration(labelText: "Password"),
+      keyboardType: TextInputType.text,
       obscureText: true,
-      decoration: const InputDecoration(
-        labelText: 'Password',
-        prefixIcon: Icon(Icons.lock_outline),
-      ),
+      controller: _passwordTextboxController,
       validator: (value) {
-        if (value == null || value.length < 6) {
-          return 'Password minimal 6 karakter';
+        if (value == null || value.isEmpty) {
+          return "Password harus diisi";
+        }
+        if (value.length < 6) {
+          return "Password harus diisi minimal 6 karakter";
         }
         return null;
       },
     );
   }
 
+  // Membuat Textbox Konfirmasi Password
   Widget _passwordKonfirmasiTextField() {
     return TextFormField(
-      controller: _passwordKonfirmasiController,
+      decoration: const InputDecoration(labelText: "Konfirmasi Password"),
+      keyboardType: TextInputType.text,
       obscureText: true,
-      decoration: const InputDecoration(
-        labelText: 'Konfirmasi Password',
-        prefixIcon: Icon(Icons.lock_reset_outlined),
-      ),
       validator: (value) {
-        if (value != _passwordController.text) {
-          return 'Konfirmasi password tidak sama';
+        if (value == null || value.isEmpty) {
+          return "Konfirmasi Password harus diisi";
+        }
+        // jika inputan tidak sama dengan password
+        if (value != _passwordTextboxController.text) {
+          return "Konfirmasi Password tidak sama";
         }
         return null;
       },
     );
   }
 
+  // Membuat Tombol Registrasi
   Widget _buttonRegistrasi() {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _onRegistrasi,
+        onPressed: _isLoading
+            ? null
+            : () {
+                final validate = _formKey.currentState!.validate();
+                if (validate) {
+                  _submit();
+                }
+              },
         child: _isLoading
             ? const SizedBox(
-                width: 18,
                 height: 18,
+                width: 18,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Text(
-                'Registrasi',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
+            : const Text("Registrasi"),
       ),
+    );
+  }
+
+  void _submit() {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
+
+    RegistrasiBloc.registrasi(
+      nama: _namaTextboxController.text,
+      email: _emailTextboxController.text,
+      password: _passwordTextboxController.text,
+    ).then(
+      (value) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => SuccessDialog(
+            description: "Registrasi berhasil, silahkan login",
+            okClick: () {
+              Navigator.pop(context); // tutup dialog
+              // balik ke halaman sebelumnya (misal Login)
+            },
+          ),
+        );
+      },
+      onError: (error) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) =>
+              WarningDialog(description: "Registrasi gagal: $error"),
+        );
+      },
     );
   }
 }

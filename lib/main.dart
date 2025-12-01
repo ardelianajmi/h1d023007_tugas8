@@ -1,56 +1,43 @@
 import 'package:flutter/material.dart';
+import '/helpers/user_info.dart';
 import '/ui/login_page.dart';
-
+import '/ui/produk_page.dart';
 void main() {
-  runApp(const MyApp());
+runApp(const MyApp());
+}
+class MyApp extends StatefulWidget {
+const MyApp({Key? key}) : super(key: key);
+@override
+_MyAppState createState() => _MyAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _MyAppState extends State<MyApp> {
+Widget page = const CircularProgressIndicator();
+@override
+void initState() {
+super.initState();
+isLogin();
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final baseTheme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFFFF80AB), // pink
-      ),
-      useMaterial3: true,
-      fontFamily: 'Roboto',
-    );
+void isLogin() async {
+var token = await UserInfo().getToken();
+if (token != null) {
+setState(() {
+page = const ProdukPage();
+});
+} else {
+setState(() {
+page = const LoginPage();
+});
+}
+}
 
-    return MaterialApp(
-      title: 'Toko Kita',
-      debugShowCheckedModeBanner: false,
-      theme: baseTheme.copyWith(
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.95),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(
-              color: Color(0xFFFF80AB),
-              width: 1.6,
-            ),
-          ),
-        ),
-      ),
-      home: const LoginPage(),
-    );
-  }
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Toko Kita',
+debugShowCheckedModeBanner: false,
+home: page,
+);
+}
 }

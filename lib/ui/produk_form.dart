@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '/model/produk.dart';
+import '/ui/produk_page.dart';
+import '/bloc/produk_bloc.dart';
+import '/widget/warning_dialog.dart';
 
 class ProdukForm extends StatefulWidget {
   Produk? produk;
@@ -54,23 +57,66 @@ class _ProdukFormState extends State<ProdukForm> {
 
     setState(() => _isLoading = true);
 
-    // TODO: hubungkan dengan API create / update
-    await Future.delayed(const Duration(seconds: 1));
+    final bool isUpdate = widget.produk != null;
 
-    setState(() => _isLoading = false);
+    // siapkan objek produk
+    final Produk dataProduk = isUpdate
+        ? Produk(id: widget.produk!.id)
+        : Produk(id: null);
 
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$judul berhasil ✅')),
-    );
-    Navigator.pop(context);
+    dataProduk.kodeProduk = _kodeProdukController.text;
+    dataProduk.namaProduk = _namaProdukController.text;
+    dataProduk.hargaProduk = int.parse(_hargaProdukController.text);
+
+    // panggil Bloc sesuai mode (tambah / ubah)
+    final Future future = isUpdate
+        ? ProdukBloc.updateProduk(produk: dataProduk)
+        : ProdukBloc.addProduk(produk: dataProduk);
+
+    future
+        .then(
+          (value) {
+            if (!mounted) return;
+
+            // opsional: tampilkan snackbar sukses
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  isUpdate
+                      ? 'Produk berhasil diubah ✅'
+                      : 'Produk baru berhasil disimpan ✅',
+                ),
+              ),
+            );
+
+            // balik ke halaman list produk
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const ProdukPage()),
+              (route) => false,
+            );
+          },
+          onError: (error) {
+            if (!mounted) return;
+            showDialog(
+              context: context,
+              builder: (_) => WarningDialog(
+                description: isUpdate
+                    ? "Permintaan ubah data gagal, silahkan coba lagi"
+                    : "Simpan gagal, silahkan coba lagi",
+              ),
+            );
+          },
+        )
+        .whenComplete(() {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // otomatis pakai judul di atas
         title: Text(judul),
         centerTitle: true,
         flexibleSpace: Container(
@@ -100,10 +146,7 @@ class _ProdukFormState extends State<ProdukForm> {
               borderRadius: BorderRadius.circular(24),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
               child: Form(
                 key: _formKey,
                 child: Column(

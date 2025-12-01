@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '/ui/register_page.dart';
+import '/bloc/login_bloc.dart';
+import '/helpers/user_info.dart';
 import '/ui/produk_page.dart';
+import '/ui/register_page.dart';
+import '/widget/warning_dialog.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -29,16 +32,50 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() => _isLoading = true);
 
-    // TODO: panggil API login di sini
-    await Future.delayed(const Duration(seconds: 1));
+    // 🔁 Panggil API login via Bloc
+    LoginBloc.login(
+          email: _emailController.text,
+          password: _passwordController.text,
+        )
+        .then(
+          (value) async {
+            if (value.code == 200) {
+              // simpan token & user id
+              await UserInfo().setToken(value.token.toString());
+              await UserInfo().setUserID(int.parse(value.userID.toString()));
 
-    setState(() => _isLoading = false);
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const ProdukPage()),
+              );
+            } else {
+              if (!mounted) return;
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (BuildContext context) => const WarningDialog(
+                  description: "Login gagal, silahkan coba lagi",
+                ),
+              );
+            }
+          },
+          onError: (error) {
+            print('ERROR LOGIN: $error');
 
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const ProdukPage()),
-    );
+            if (!mounted) return;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (BuildContext context) =>
+                  WarningDialog(description: "Login gagal: $error"),
+            );
+          },
+        )
+        .whenComplete(() {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+        });
   }
 
   @override
@@ -59,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
 
-      // BODY JANGAN DIMASUKKAN KE flexibleSpace
+      // BODY
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -102,18 +139,12 @@ class _LoginPageState extends State<LoginPage> {
                 const Text(
                   'Selamat Datang di Toko Kita',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Login dulu untuk kelola produk kamu ✨',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey.shade700,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
                 const SizedBox(height: 20),
 
@@ -195,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
         if (value == null || value.isEmpty) {
           return 'Password harus diisi';
         }
-        if (value.length < 6) {
+        if (value.length < 3) {
           return 'Password minimal 6 karakter';
         }
         return null;
@@ -229,18 +260,13 @@ class _LoginPageState extends State<LoginPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Belum punya akun?',
-              style: TextStyle(fontSize: 12),
-            ),
+            const Text('Belum punya akun?', style: TextStyle(fontSize: 12)),
             const SizedBox(width: 4),
             GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const RegistrasiPage(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const RegistrasiPage()),
                 );
               },
               child: const Text(
